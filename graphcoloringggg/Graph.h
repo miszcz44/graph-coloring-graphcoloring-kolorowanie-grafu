@@ -16,7 +16,7 @@ public:
     void greedyColoring(int numberOfVertices, int** adjacencyMatrix);
 };
 
-class GraphGeneticReady() {
+class GraphGeneticReady: Graph{
     vector<int> Individual;
     vector<vector<int>> Population;
     int Generation;
