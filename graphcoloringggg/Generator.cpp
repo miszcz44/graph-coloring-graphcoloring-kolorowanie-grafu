@@ -89,11 +89,11 @@ int** Generator::generateAdjacencyMatrix(int numberOfVertices, int** edges) {
         adjacencyMatrix[vertice1][vertice2] = 1;
         adjacencyMatrix[vertice2][vertice1] = 1;
     }
-    for (int i = 0; i < numberOfVertices; i++) {
+    /*for (int i = 0; i < numberOfVertices; i++) {
         for (int j = 0; j < numberOfVertices; j++) {
             cout << adjacencyMatrix[i][j] << " ";
         }
         cout << endl;
-    }
+    }*/
     return adjacencyMatrix;
 }

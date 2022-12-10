@@ -14,6 +14,10 @@ Graph::Graph(int vertices, int** edges) {
 	Edges = edges;
 }
 
+Graph::Graph() {
+
+}
+
 Graph::~Graph() {
 
 }
@@ -81,14 +85,15 @@ void Graph::greedyColoring(int numberOfVertices, int** adjacencyMatrix)
 int get_random_number(int a, int z) {
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<> distr(a, z)
-        return distr(gen);
+    uniform_int_distribution<> distr(a, z);
+    return distr(gen);
 }
 
 float get_random_float(float a, float z) {
     random_device rd;
-    uniform_real_distribution<float> distr(a, z)
-        return distr(gen);
+    mt19937 gen(rd());
+    uniform_real_distribution<float> distr(a, z);
+    return distr(gen);
 }
 
 int sum(int a[], int n) {
@@ -96,74 +101,111 @@ int sum(int a[], int n) {
     return accumulate(a, a + n, initial_sum);
 }
 
-GraphGeneticReady::GraphGeneticReady(vector<int> individual, vector<vector<int>> population, int generation, int num, int fitness) {
+GraphGeneticReady::GraphGeneticReady(vector<int> individual, vector<vector<int>> population, int generation, int num, int fitness, int populationSize) {
     Individual = individual;
     Population = population;
     Generation = generation;
     NumberOfColors = num;
     Fitness = fitness;
+    PopulationSize = populationSize;
 };
+
+GraphGeneticReady::GraphGeneticReady(int generation, int num, int fitness, int vertices, int populationSize) {
+    Generation = generation;
+    NumberOfColors = num;
+    Fitness = fitness;
+    numberOfVertices = vertices;
+    PopulationSize = populationSize;
+}
+
+GraphGeneticReady::~GraphGeneticReady() {
+    
+}
 
 void GraphGeneticReady::GeneticAlgorithm(int numberOfVertices, int** adjacencyMatrix) {
     
 }
 
 void GraphGeneticReady::SetPopulation(){
-    int population_size = 200;
     int generation = 0;
-    vector<vector<int>> population(population_size, vector<int>(getNumberOfVertices(), 0);
-    for (int i = 0; i < population_size; i++) {
-        vector<int> individual = SetIndividual();
+    vector<vector<int>> population;
+    for (int i = 0; i < getPopulationSize(); i++) {
+        vector<int> individual = GetIndividual();
+        //cout << individual[15];
         population.push_back(individual);
+        //cout << population[i][0];
+        //cout << individual[0] << " " << individual[1] << " " << individual[2] << " " << individual[3] << endl;
+
     }
     Population = population;
+
 }
 
 vector<vector<int>> GraphGeneticReady::GetPopulation() {
-
+    return Population;
 }
 
-void GraphGeneticReady::SetNumberOfColors(int** adjacencyMatrix) {
+int GraphGeneticReady::getPopulationSize() {
+    return PopulationSize;
+}
+
+
+//vector<vector<int>> GraphGeneticReady::GetPopulation() {
+
+//}
+
+void GraphGeneticReady::SetNumberOfColors(int **adjacencyMatrix) {
     int maxNumberOfColors = 1;
+    int counter = 0;
     for (int i = 0; i < getNumberOfVertices(); i++) {
-        if (sum(adjacencyMatrix[i], sizeof(adjacencyMatrix[i]) / sizeof(adjacencyMatrix[0][0])) > maxNumberOfColors) {
-            maxNumberOfColors = (sum(adjacencyMatrix[i], sizeof(adjacencyMatrix[i]) / sizeof(adjacencyMatrix[0][0]) + 1;
+        for (int j = 0; j < getNumberOfVertices(); j++) {
+            if (adjacencyMatrix[i][j] == 1) {
+                counter++;
+            }
         }
+        if (counter > maxNumberOfColors) {
+            maxNumberOfColors = counter;
+        }
+        counter = 0;
     }
-    NumberOfColors = maxNumberOfColors;
+    NumberOfColors = maxNumberOfColors + 1;
 }
 
 int GraphGeneticReady::GetNumberOfColors() {
     return NumberOfColors;
 }
 
-void GraphGeneticReady::SetIndividual() {
-    for (int i = 0; i < getNumberOfVertices(); i++) {
-        Individual.push_back(get_random_number(1, GetNumberOfColors()));
-    }
-}
-
 vector<int> GraphGeneticReady::GetIndividual() {
-    return Individual;
+    vector<int> individual;
+    for (int i = 0; i < getNumberOfVertices(); i++) {
+        individual.push_back(get_random_number(1, GetNumberOfColors()));
+    }
+    return individual;
 }
 
-void GraphGeneticReady::SetFitness(int** adjacencyMatrix, vector<int> individual) {
+//vector<int> GraphGeneticReady::GetIndividual() {
+//    return Individual;
+//}
+
+int GraphGeneticReady::GetFitness(int** adjacencyMatrix, vector<int> individual) {
     int fitness = 0;
-    for (int i = 0, i < getNumberOfVertices(); i++) {
-        for (int j = i; j < getNumberOfVertices(); j++) {
+    for (int i = 0; i < getNumberOfVertices(); i++) {
+        for (int j = i+1; j < getNumberOfVertices(); j++) {
             if (individual[i] == individual[j] and adjacencyMatrix[i][j] == 1) {
                 fitness++;
            }
         }
     }
+    //cout << fitness;
     Fitness = fitness;
+    return fitness;
 }
 
-int GraphGeneticReady::GetFitness() {
-    return Fitness;
-}
+//int GraphGeneticReady::GetFitness() {
+//    return Fitness;
+//}
 
-tuple< vector<int>, vector<int> > GraphGeneticReady::Crossover(int parent1, int parent2) {
+tuple< vector<int>, vector<int> > GraphGeneticReady::Crossover(vector<int> parent1, vector<int> parent2) {
     int position = get_random_number(2, getNumberOfVertices() - 2);
     vector<int> child1, child2;
     for (int i = 0; i < position + 1; i++) {
@@ -198,13 +240,20 @@ vector<int> GraphGeneticReady::Mutation2(vector<int> individual) {
 }
 
 
-/*
-vector<int> TournamentSelection(vector<int> population) {
-    vector<int> new_population;
+vector<vector<int>> GraphGeneticReady::TournamentSelection(vector<vector<int>> population, int** adjacencyMatrix) {
+    vector<vector<int>> new_population;
     for (int i = 0; i < 2; i++) {
-        auto rng = default_random_engine{};
-        shuffle(begin(population), end(population), rng);
-        
+        random_device rd;
+        mt19937 g(rd());
+        shuffle(population.begin(), population.end(), g);
+        for (int j = 0; j < getPopulationSize() - 1; j += 2) {
+            if (GetFitness(adjacencyMatrix, population[j]) < GetFitness(adjacencyMatrix, population[j+1])) {
+                new_population.push_back(population[j]);
+            }
+            else {
+                new_population.push_back(population[j+1]);
+            }
+        }
     }
+    return new_population;
 }
-*/
