@@ -29,22 +29,26 @@ int main()
 
     FileReader fileReader("Tekst.txt");
     generator.setNumberOfEdges(fileReader.readNumberOfEdgesFromFile(fileReader.getFilePath()));
+
     generator.setNumberOfVertices(fileReader.readNumberOfVerticesFromFile(fileReader.getFilePath()));
+
     generator.setEdges(fileReader.readEdgesFromFile(fileReader.getFilePath()));
+
     //generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges());
 
     //Graph graph(generator.getNumberOfVertices(), generator.getEdges());
     //graph.greedyColoring(graph.getNumberOfVertices(), generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));
     Graph graph(generator.getNumberOfVertices(), generator.getEdges());
+    
 
     //gett_random_number(0, 53);
     //cout << graph.getNumberOfVertices();
     GraphGeneticReady graphGeneticReady(0, 0, 0, graph.getNumberOfVertices(), 200);
-    graphGeneticReady.SetNumberOfColors(generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));
+   /* graphGeneticReady.SetNumberOfColors(generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));
     graphGeneticReady.SetPopulation();
     graphGeneticReady.GetFitness(generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()), graphGeneticReady.GetIndividual());
-    graphGeneticReady.TournamentSelection(graphGeneticReady.GetPopulation(), generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));
-
+    graphGeneticReady.TournamentSelection(graphGeneticReady.GetPopulation(), generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));*/
+    graphGeneticReady.GeneticAlgorithm(graph.getNumberOfVertices(), generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));
 
     return 0;
 }

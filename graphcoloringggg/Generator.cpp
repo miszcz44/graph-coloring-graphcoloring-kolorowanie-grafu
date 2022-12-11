@@ -87,7 +87,7 @@ int** Generator::generateAdjacencyMatrix(int numberOfVertices, int** edges) {
         int vertice1 = edges[i][0] - 1;
         int vertice2 = edges[i][1] - 1;
         adjacencyMatrix[vertice1][vertice2] = 1;
-        adjacencyMatrix[vertice2][vertice1] = 1;
+        //adjacencyMatrix[vertice2][vertice1] = 1;
     }
     /*for (int i = 0; i < numberOfVertices; i++) {
         for (int j = 0; j < numberOfVertices; j++) {

@@ -122,9 +122,7 @@ GraphGeneticReady::~GraphGeneticReady() {
     
 }
 
-void GraphGeneticReady::GeneticAlgorithm(int numberOfVertices, int** adjacencyMatrix) {
-    
-}
+
 
 void GraphGeneticReady::SetPopulation(){
     int generation = 0;
@@ -169,6 +167,7 @@ void GraphGeneticReady::SetNumberOfColors(int **adjacencyMatrix) {
         counter = 0;
     }
     NumberOfColors = maxNumberOfColors + 1;
+    NumberOfColors = 16;
 }
 
 int GraphGeneticReady::GetNumberOfColors() {
@@ -256,4 +255,52 @@ vector<vector<int>> GraphGeneticReady::TournamentSelection(vector<vector<int>> p
         }
     }
     return new_population;
+}
+
+void GraphGeneticReady::GeneticAlgorithm(int numberOfVertices, int** adjacencyMatrix) {
+    SetNumberOfColors(adjacencyMatrix);
+    SetPopulation();
+    int bestFitness = GetFitness(adjacencyMatrix, GetPopulation()[0]);
+    vector<int> fittestIndividual = GetPopulation()[0];
+    int gen = 0;
+    vector<int> child1, child2;
+    while (bestFitness != 0 and gen != 10000) {
+        gen++;
+        Population = TournamentSelection(GetPopulation(), adjacencyMatrix);
+        vector<vector<int>> new_population;
+        random_device rd;
+        mt19937 g(rd());
+        shuffle(Population.begin(), Population.end(), g);
+        for(int i = 0; i < getPopulationSize() - 1; i = i + 2) {
+            tie(child1, child2) = Crossover(Population[i], Population[i + 1]);
+            new_population.push_back(child1);
+            new_population.push_back(child2);
+        }
+        for (vector<int> individual : new_population) {
+            if (gen < 200) {
+                individual = Mutation1(individual);
+            }
+            else {
+                individual = Mutation2(individual);
+            }
+        }
+        Population = new_population;
+        bestFitness = GetFitness(adjacencyMatrix, Population[0]);
+        fittestIndividual = Population[0];
+        for (vector<int> individual : Population) {
+            if (GetFitness(adjacencyMatrix, individual) < bestFitness) {
+                bestFitness = GetFitness(adjacencyMatrix, individual);
+                fittestIndividual = individual;
+            }
+        }
+        if (gen % 10 == 0 or bestFitness == 0) {
+            cout << "Generation: " << gen << " Best Fitness: " << bestFitness << endl;
+            for (int numb : fittestIndividual) {
+                cout << numb << ", ";
+            }
+            cout << endl;
+        }
+        
+    }
+
 }
