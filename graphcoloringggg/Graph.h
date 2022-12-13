@@ -45,7 +45,7 @@ public:
     int GetFitness(int** adjacencyMatrix, vector<int> individual);
     //int GetFitness();
     tuple< vector<int>, vector<int> > Crossover(vector<int> parent1, vector<int> parent2);
-    vector<int> Mutation1(vector<int> individual);
-    vector<int> Mutation2(vector<int> individual);
+    vector<int> Mutation1(vector<int> individual, int** adjacencyMatrix);
+    vector<int> Mutation2(vector<int> individual, int** adjacencyMatrix);
     vector<vector<int>> TournamentSelection(vector<vector<int>> population, int** adjacencyMatrix);
 };

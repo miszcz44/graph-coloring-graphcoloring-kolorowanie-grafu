@@ -43,12 +43,12 @@ int main()
 
     //gett_random_number(0, 53);
     //cout << graph.getNumberOfVertices();
-    GraphGeneticReady graphGeneticReady(0, 0, 0, graph.getNumberOfVertices(), 200);
+    GraphGeneticReady graphGeneticReady(0, 0, 0, graph.getNumberOfVertices(), 50);
    /* graphGeneticReady.SetNumberOfColors(generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));
     graphGeneticReady.SetPopulation();
     graphGeneticReady.GetFitness(generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()), graphGeneticReady.GetIndividual());
     graphGeneticReady.TournamentSelection(graphGeneticReady.GetPopulation(), generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));*/
     graphGeneticReady.GeneticAlgorithm(graph.getNumberOfVertices(), generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));
-
+    //graph.greedyColoring(graph.getNumberOfVertices(), generator.generateAdjacencyMatrix(generator.getNumberOfVertices(), generator.getEdges()));
     return 0;
 }
