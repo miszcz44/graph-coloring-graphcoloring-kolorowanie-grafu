@@ -167,7 +167,7 @@ void GraphGeneticReady::SetNumberOfColors(int **adjacencyMatrix) {
         counter = 0;
     }
     //NumberOfColors = maxNumberOfColors + 1;
-    NumberOfColors = 7;
+    NumberOfColors = 100;
 }
 
 int GraphGeneticReady::GetNumberOfColors() {
@@ -208,19 +208,23 @@ tuple< vector<int>, vector<int> > GraphGeneticReady::Crossover(vector<int> paren
     int position = get_random_number(2, getNumberOfVertices() - 2);
     //cout << position << endl;
     vector<int> child1, child2;
+    //cout << "a" << endl;
     for (int i = 0; i < position + 1; i++) {
         child1.push_back(parent1[i]);
         child2.push_back(parent2[i]);
     }
+    
     for (int j = position + 1; j < getNumberOfVertices(); j++) {
         child1.push_back(parent2[j]);
         child2.push_back(parent1[j]);
     }
+    //cout << "b" << endl;
     return make_tuple(child1, child2);
 }
 
 vector<int> GraphGeneticReady::Mutation1(vector<int> individual, int** adjacencyMatrix) {
     for (int i = 0; i < getNumberOfVertices(); i++) {
+        //cout << "c" << endl;
         vector<int> adjacentColors;
         int numberOfAdjacentColors = 0;
         for (int j = i+1; j < getNumberOfVertices(); j++) {
@@ -229,6 +233,7 @@ vector<int> GraphGeneticReady::Mutation1(vector<int> individual, int** adjacency
                 numberOfAdjacentColors++;
             }
         }
+        //cout << "d" << endl;
         if (numberOfAdjacentColors != 0) {
             vector<int> validColors;
             for (int j = 1; j < GetNumberOfColors(); j++) {
@@ -255,7 +260,7 @@ vector<int> GraphGeneticReady::Mutation2(vector<int> individual, int** adjacency
         //cout << validColors[j-1] << " ";
     }
     for (int i = 0; i < getNumberOfVertices(); i++) {
-        for (int j = i + 1; j < getNumberOfVertices(); j++) {
+        for (int j = 0; j < getNumberOfVertices(); j++) {
             if (adjacencyMatrix[i][j] == 1 and individual[i] == individual[j]) {
                 int newColorPosition = rand() % validColors.size();
                 int newColor = validColors[newColorPosition];
@@ -296,7 +301,7 @@ void GraphGeneticReady::GeneticAlgorithm(int numberOfVertices, int** adjacencyMa
     random_device rd;
     mt19937 g(rd());
     while (bestFitness != 0 and gen != 10000) {
-        /*if (gen % 150 == 0) {
+        /*if (gen % 50 == 0) {
             for (int i = 0; i < 10; i++) {
                 Population.pop_back();
             }
@@ -305,16 +310,12 @@ void GraphGeneticReady::GeneticAlgorithm(int numberOfVertices, int** adjacencyMa
             }
         }*/
         gen++;
-        Population = TournamentSelection(GetPopulation(), adjacencyMatrix);
+        //Population = TournamentSelection(GetPopulation(), adjacencyMatrix);
         vector<vector<int>> new_population;
         shuffle(Population.begin(), Population.end(), g);
-        if (gen % 10 == 0 or bestFitness == 0) {
-            cout << "Generation: " << gen << " Best Fitness: " << bestFitness << endl;
-            for (int nmb : fittestIndividual) {
-                cout << nmb << " ";
-            }
-            cout << endl;
+        
         for(int i = 0; i < getPopulationSize() - 1; i = i + 2) {
+
             if (bestFitness < 5) {
                 tie(child1, child2) = Crossover(fittestIndividual, fittestIndividual);
             }
@@ -341,9 +342,12 @@ void GraphGeneticReady::GeneticAlgorithm(int numberOfVertices, int** adjacencyMa
             new_population.push_back(child1);
             new_population.push_back(child2);
         }
-        for (int i = 0; i < getNumberOfVertices(); i++) {
+        for (int i = 0; i < getPopulationSize(); i++) {
             if (bestFitness >= 5) {
+                //cout << "adsa" << endl;
+                //cout << i << endl;
                 new_population[i] = Mutation1(new_population[i], adjacencyMatrix);
+                //cout << "sss" << endl;
             }
             else {
                 new_population[i] = Mutation2(new_population[i], adjacencyMatrix);
@@ -358,7 +362,12 @@ void GraphGeneticReady::GeneticAlgorithm(int numberOfVertices, int** adjacencyMa
                 fittestIndividual = individual;
             }
         }
-       
+        if (gen % 10 == 0 or bestFitness == 0) {
+            cout << "Generation: " << gen << " Best Fitness: " << bestFitness << endl;
+            for (int nmb : fittestIndividual) {
+                cout << nmb << " ";
+            }
+            cout << endl;
             cout << getPopulationSize();
         }
         
