@@ -130,12 +130,16 @@
     <ClInclude Include="FileReader.h" />
     <ClInclude Include="generator.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="GraphGeneticReady.h" />
+    <ClInclude Include="UserControl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="Generator.cpp" />
+    <ClCompile Include="GraphGeneticReady.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="UserControl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Tekst.txt" />

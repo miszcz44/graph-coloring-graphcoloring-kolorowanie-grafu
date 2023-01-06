@@ -5,23 +5,14 @@
 
 using namespace std;
 
-FileReader::FileReader(string path) {
-    filePath = path;
+
+
+string FileReader::getFilePath(UserControl user) {
+    return user.filePath;
 }
 
-FileReader::~FileReader() {
-
-}
-
-string FileReader::getFilePath() {
-    return filePath;
-}
-
-void FileReader::setFilePath(string path) {
-    filePath = path;
-}
-
-int FileReader::readNumberOfVerticesFromFile(string filePath) {
+int FileReader::readNumberOfVerticesFromFile(UserControl user) {
+    string filePath = getFilePath(user);
     fstream file(filePath);
     int numberOfVertices;
     string fileText;
@@ -31,11 +22,12 @@ int FileReader::readNumberOfVerticesFromFile(string filePath) {
     return numberOfVertices;
 }
 
-int FileReader::readNumberOfEdgesFromFile(string filePath) {
+int FileReader::readNumberOfEdgesFromFile(UserControl user) {
+    string filePath = getFilePath(user);
     fstream file(filePath);
-    int numberOfEdges = 0;
     string fileText;
     getline(file, fileText);
+    int numberOfEdges = 0;
     while (getline(file, fileText)) {
         numberOfEdges++;
     }
@@ -43,17 +35,15 @@ int FileReader::readNumberOfEdgesFromFile(string filePath) {
     return numberOfEdges;
 }
 
-int** FileReader::readEdgesFromFile(string filePath) {
+int** FileReader::readEdgesFromFile(UserControl user) {
+    string filePath = getFilePath(user);
     fstream file(filePath);
     int numberOfVertices;
     string fileText;
     getline(file, fileText);
     numberOfVertices = stoi(fileText);
-    int numberOfEdges = readNumberOfEdgesFromFile(filePath);
-    int** edges = new int* [numberOfEdges];
-    for (int i = 0; i < numberOfEdges; i++) {
-        edges[i] = new int[2];
-    }
+    int numberOfEdges = readNumberOfEdgesFromFile(user);
+    int** edges = generateMatrix(numberOfEdges);
     int cnt = 0;
     char c;
     string vertice = "";
@@ -71,5 +61,6 @@ int** FileReader::readEdgesFromFile(string filePath) {
             vertice = vertice + c;
         }
     }
+    file.close();
     return edges;
 }

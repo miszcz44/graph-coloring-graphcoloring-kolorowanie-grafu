@@ -1,21 +1,20 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string>
+#include "generator.h"
+#include "UserControl.h"
+#include <fstream>
 
 
 using std::string;
 
-class FileReader {
-
-    string filePath;
+class FileReader : public Generator {
 
 public:
-    FileReader(string filePath);
-    ~FileReader();
-    void setFilePath(string filePath);
-    string getFilePath();
-    int readNumberOfVerticesFromFile(string filePath);
-    int readNumberOfEdgesFromFile(string filePath);
-    int** readEdgesFromFile(string filePath);
+
+    string getFilePath(UserControl user);
+    int readNumberOfVerticesFromFile(UserControl user);
+    int readNumberOfEdgesFromFile(UserControl user);
+    int** readEdgesFromFile(UserControl user);
 
 };
