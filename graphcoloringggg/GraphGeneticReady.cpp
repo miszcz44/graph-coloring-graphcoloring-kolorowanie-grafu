@@ -24,6 +24,11 @@ int sum(int a[], int n) {
     return accumulate(a, a + n, initial_sum);
 }
 
+bool sortcol(const vector<int>& v1,
+    const vector<int>& v2) {
+    return v1[v1.size() - 1] < v2[v2.size() - 1];
+}
+
 GraphGeneticReady::GraphGeneticReady(vector<int> individual, vector<vector<int>> population, int generation, int num, int fitness, int populationSize) {
     Individual = individual;
     Population = population;
@@ -69,6 +74,29 @@ void GraphGeneticReady::SetPopulation() {
 
 }
 
+void GraphGeneticReady::setNeighbors(int** adjacencyMatrix) {
+    vector<vector<int>> allVerticesNeighborhood;
+    for (int i = 0; i < getNumberOfVertices(); i++) {
+        vector<int> neighboringVertices;
+        for (int j = 0; j < getNumberOfVertices(); j++) {
+            if (adjacencyMatrix[i][j] == 1) {
+                neighboringVertices.push_back(j);
+            }
+        }
+        allVerticesNeighborhood.push_back(neighboringVertices);
+
+    }
+    neighbors = allVerticesNeighborhood;
+}
+
+void GraphGeneticReady::setColors() {
+    vector<int> tmpColors;
+    for (int i = 1; i < GetNumberOfColors()+1; i++) {
+        tmpColors.push_back(i);
+    }
+    colors = tmpColors;
+}
+
 vector<vector<int>> GraphGeneticReady::GetPopulation() {
     return Population;
 }
@@ -96,7 +124,7 @@ void GraphGeneticReady::SetNumberOfColors(int** adjacencyMatrix) {
         }
         counter = 0;
     }
-    NumberOfColors = maxNumberOfColors + 1;
+    NumberOfColors = maxNumberOfColors;
 }
 
 int GraphGeneticReady::GetNumberOfColors() {
@@ -115,11 +143,11 @@ vector<int> GraphGeneticReady::GetIndividual() {
 //    return Individual;
 //}
 
-int GraphGeneticReady::GetFitness(int** adjacencyMatrix, vector<int> individual) {
+int GraphGeneticReady::GetFitness(vector<int> individual) {
     int fitness = 0;
     for (int i = 0; i < getNumberOfVertices(); i++) {
-        for (int j = i + 1; j < getNumberOfVertices(); j++) {
-            if (individual[i] == individual[j] and adjacencyMatrix[i][j] == 1) {
+        for (int neighbor : neighbors[i]) {
+            if (individual[i] == individual[neighbor]) {
                 fitness++;
             }
         }
@@ -156,24 +184,20 @@ vector<int> GraphGeneticReady::Mutation1(vector<int> individual, int** adjacency
         //cout << "c" << endl;
         vector<int> adjacentColors;
         int numberOfAdjacentColors = 0;
-        for (int j = i + 1; j < getNumberOfVertices(); j++) {
-            if (adjacencyMatrix[i][j] == 1 and individual[i] == individual[j]) {
-                adjacentColors.push_back(individual[i]);
+        vector<int> validColors = colors;
+        for (int neighbor : neighbors[i]) {
+            if (individual[i] == individual[neighbor]) {
                 numberOfAdjacentColors++;
             }
+            for (int j = 0; j < validColors.size(); j++) {
+                if (validColors[j] == individual[neighbor]) {
+                    validColors.erase(validColors.begin() + j);
+                    break;
+                }
+            }
         }
-        //cout << "d" << endl;
-        if (numberOfAdjacentColors != 0) {
-            vector<int> validColors;
-            for (int j = 1; j < GetNumberOfColors(); j++) {
-                validColors.push_back(j);
-                //cout << validColors[j-1] << " ";
-            }
-
-            for (int j = 0; j < numberOfAdjacentColors; j++) {
-                validColors.erase(std::remove(validColors.begin(), validColors.end(), adjacentColors[j]), validColors.end());
-                //cout << "-";
-            }
+        
+        if (validColors.size() != 0) {
             int newColorPosition = rand() % validColors.size();
             int newColor = validColors[newColorPosition];
             individual[i] = newColor;
@@ -183,17 +207,14 @@ vector<int> GraphGeneticReady::Mutation1(vector<int> individual, int** adjacency
 }
 
 vector<int> GraphGeneticReady::Mutation2(vector<int> individual, int** adjacencyMatrix) {
-    vector<int> validColors;
-    for (int j = 1; j < GetNumberOfColors(); j++) {
-        validColors.push_back(j);
-        //cout << validColors[j-1] << " ";
-    }
+    vector<int> validColors = colors;
     for (int i = 0; i < getNumberOfVertices(); i++) {
-        for (int j = 0; j < getNumberOfVertices(); j++) {
-            if (adjacencyMatrix[i][j] == 1 and individual[i] == individual[j]) {
+        for (int neighbor : neighbors[i]) {
+            if (individual[i] == individual[neighbor]) {
                 int newColorPosition = rand() % validColors.size();
                 int newColor = validColors[newColorPosition];
                 individual[i] = newColor;
+                break;
             }
         }
     }
@@ -202,36 +223,45 @@ vector<int> GraphGeneticReady::Mutation2(vector<int> individual, int** adjacency
 }
 
 
-vector<vector<int>> GraphGeneticReady::TournamentSelection(vector<vector<int>> population, int** adjacencyMatrix) {
-    vector<vector<int>> new_population;
-    for (int i = 0; i < 2; i++) {
-        random_device rd;
-        mt19937 g(rd());
-        shuffle(population.begin(), population.end(), g);
-        for (int j = 0; j < getPopulationSize() - 1; j += 2) {
-            if (GetFitness(adjacencyMatrix, population[j]) < GetFitness(adjacencyMatrix, population[j + 1])) {
-                new_population.push_back(population[j]);
-            }
-            else {
-                new_population.push_back(population[j + 1]);
-            }
-        }
-    }
-    return new_population;
-}
+//vector<vector<int>> GraphGeneticReady::TournamentSelection(vector<vector<int>> population, int** adjacencyMatrix) {
+//    vector<vector<int>> new_population;
+//    for (int i = 0; i < 2; i++) {
+//        random_device rd;
+//        mt19937 g(rd());
+//        shuffle(population.begin(), population.end(), g);
+//        for (int j = 0; j < getPopulationSize() - 1; j += 2) {
+//            if (GetFitness(adjacencyMatrix, population[j]) < GetFitness(adjacencyMatrix, population[j + 1])) {
+//                new_population.push_back(population[j]);
+//            }
+//            else {
+//                new_population.push_back(population[j + 1]);
+//            }
+//        }
+//    }
+//    return new_population;
+//}
 
 void GraphGeneticReady::GeneticAlgorithm(int** adjacencyMatrix) {
     int gen = 1;
     SetNumberOfColors(adjacencyMatrix);
+    setNeighbors(adjacencyMatrix);
     while(gen != 10000) {
+        
         SetPopulation();
-        int bestFitness = GetFitness(adjacencyMatrix, GetPopulation()[0]);
+        setColors();
+        for (int i = 0; i < getPopulationSize(); i++) {
+            int fit = GetFitness(Population[i]);
+            Population[i].push_back(fit);
+        }
+        
+        gen = 0;
+        int bestFitness = GetFitness(GetPopulation()[0]);
         vector<int> fittestIndividual = GetPopulation()[0];
         vector<int> child1, child2;
         random_device rd;
         mt19937 g(rd());
         while (bestFitness != 0 and gen != 10000) {
-        
+            
             /*if (gen % 50 == 0) {
                 for (int i = 0; i < 10; i++) {
                     Population.pop_back();
@@ -241,13 +271,22 @@ void GraphGeneticReady::GeneticAlgorithm(int** adjacencyMatrix) {
                 }
             }*/
             gen++;
+            sort(Population.begin(), Population.end(), sortcol);
+            for (int i = getPopulationSize() / 2; i < getPopulationSize(); i++) {
+                //cout << Population[getPopulationSize()/2][getNumberOfVertices()] << endl;
+                Population.erase(Population.begin() + getPopulationSize() / 2);
+                vector<int> individual = GetIndividual();
+                int fit = GetFitness(individual);
+                individual.push_back(fit);
+                Population.push_back(individual);
+            }
             //Population = TournamentSelection(GetPopulation(), adjacencyMatrix);
             vector<vector<int>> new_population;
-            shuffle(Population.begin(), Population.end(), g);
+            //shuffle(Population.begin(), Population.end(), g);
 
             for (int i = 0; i < getPopulationSize() - 1; i = i + 2) {
 
-                if (bestFitness < 5) {
+                if (bestFitness < 10) {
                     tie(child1, child2) = Crossover(fittestIndividual, fittestIndividual);
                 }
                 else {
@@ -256,13 +295,13 @@ void GraphGeneticReady::GeneticAlgorithm(int** adjacencyMatrix) {
                     int possibleParent3 = rand() % Population.size();
                     int possibleParent4 = rand() % Population.size();
                     vector<int> parent1, parent2;
-                    if (GetFitness(adjacencyMatrix, Population[possibleParent1]) > GetFitness(adjacencyMatrix, Population[possibleParent2])) {
+                    if (Population[possibleParent1][getNumberOfVertices()] > Population[possibleParent2][getNumberOfVertices()]) {
                         parent1 = Population[possibleParent2];
                     }
                     else {
                         parent1 = Population[possibleParent1];
                     }
-                    if (GetFitness(adjacencyMatrix, Population[possibleParent3]) > GetFitness(adjacencyMatrix, Population[possibleParent4])) {
+                    if (Population[possibleParent3][getNumberOfVertices()] > Population[possibleParent4][getNumberOfVertices()]) {
                         parent2 = Population[possibleParent4];
                     }
                     else {
@@ -274,7 +313,7 @@ void GraphGeneticReady::GeneticAlgorithm(int** adjacencyMatrix) {
                 new_population.push_back(child2);
             }
             for (int i = 0; i < getPopulationSize(); i++) {
-                if (bestFitness >= 5) {
+                if (bestFitness >= 10) {
                     //cout << "adsa" << endl;
                     //cout << i << endl;
                     new_population[i] = Mutation1(new_population[i], adjacencyMatrix);
@@ -285,11 +324,15 @@ void GraphGeneticReady::GeneticAlgorithm(int** adjacencyMatrix) {
                 }
             }
             Population = new_population;
-            bestFitness = GetFitness(adjacencyMatrix, Population[0]);
+            for (int i = 0; i < getPopulationSize(); i++) {
+                int fit = GetFitness(Population[i]);
+                Population[i].push_back(fit);
+            }
+            bestFitness = GetFitness(Population[0]);
             fittestIndividual = Population[0];
             for (vector<int> individual : Population) {
-                if (GetFitness(adjacencyMatrix, individual) < bestFitness) {
-                    bestFitness = GetFitness(adjacencyMatrix, individual);
+                if (individual[getNumberOfVertices()] < bestFitness) {
+                    bestFitness = individual[getNumberOfVertices()];
                     fittestIndividual = individual;
                 }
             }

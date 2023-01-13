@@ -59,7 +59,7 @@ int main()
         user.setNumberOfEdges(fileReader.readNumberOfEdgesFromFile(user));
         user.setNumberOfVertices(fileReader.readNumberOfVerticesFromFile(user));
         graph.greedyColoring(generator.getNumberOfVertices(user), generator.generateAdjacencyMatrix(fileReader.readEdgesFromFile(user), user));
-        GraphGeneticReady graphGeneticReady(100, generator.getNumberOfVertices(user));
+        GraphGeneticReady graphGeneticReady(50, generator.getNumberOfVertices(user));
         graphGeneticReady.GeneticAlgorithm(generator.generateAdjacencyMatrix(fileReader.readEdgesFromFile(user), user));
 
     }

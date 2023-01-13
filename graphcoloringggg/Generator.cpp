@@ -88,12 +88,12 @@ int** Generator::generateAdjacencyMatrix(int** edges, UserControl user) {
         adjacencyMatrix[vertice1][vertice2] = 1;
         adjacencyMatrix[vertice2][vertice1] = 1;
     }
-    cout << "------------------MACIERZ S¥SIEDZTWA-----------------" << endl;
+   /* cout << "------------------MACIERZ S¥SIEDZTWA-----------------" << endl;
     for (int i = 0; i < getNumberOfVertices(user); i++) {
         for (int j = 0; j < getNumberOfVertices(user); j++) {
             cout << adjacencyMatrix[i][j] << " ";
         }
         cout << endl;
-    }
+    }*/
     return adjacencyMatrix;
 }
