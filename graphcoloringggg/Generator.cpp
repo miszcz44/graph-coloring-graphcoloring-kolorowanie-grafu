@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <fstream>
 #include "generator.h"
 
 using namespace std;
@@ -88,12 +89,17 @@ int** Generator::generateAdjacencyMatrix(int** edges, UserControl user) {
         adjacencyMatrix[vertice1][vertice2] = 1;
         adjacencyMatrix[vertice2][vertice1] = 1;
     }
-   /* cout << "------------------MACIERZ S¥SIEDZTWA-----------------" << endl;
+    // cout << "------------------MACIERZ S¥SIEDZTWA-----------------" << endl;
+    ofstream File("out.txt");
     for (int i = 0; i < getNumberOfVertices(user); i++) {
         for (int j = 0; j < getNumberOfVertices(user); j++) {
-            cout << adjacencyMatrix[i][j] << " ";
+            // cout << adjacencyMatrix[i][j] << " ";
+            File << adjacencyMatrix[i][j] << " ";
         }
-        cout << endl;
-    }*/
+        File << endl;
+        // cout << endl;
+    }
+    File.close();
     return adjacencyMatrix;
 }
+

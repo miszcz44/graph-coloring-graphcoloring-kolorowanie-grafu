@@ -4,6 +4,7 @@
 #include <tuple>
 #include <numeric>
 #include <algorithm>
+#include <fstream>
 
 int get_random_number(int a, int z) {
     random_device rd;
@@ -260,7 +261,7 @@ void GraphGeneticReady::GeneticAlgorithm(int** adjacencyMatrix) {
         vector<int> child1, child2;
         random_device rd;
         mt19937 g(rd());
-        while (bestFitness != 0 and gen != 10000) {
+        while (bestFitness != 0 && gen != 10000) {
             
             /*if (gen % 50 == 0) {
                 for (int i = 0; i < 10; i++) {
@@ -336,17 +337,27 @@ void GraphGeneticReady::GeneticAlgorithm(int** adjacencyMatrix) {
                     fittestIndividual = individual;
                 }
             }
-            if (gen % 10 == 0 or bestFitness == 0) {
+            
+            if (gen % 10 == 0 || bestFitness == 0) {
                 cout << "Number Of Colors: " << NumberOfColors << " Generation: " << gen << " Best Fitness: " << bestFitness << endl;
                 for (int nmb : fittestIndividual) {
-                    cout << nmb << " ";
+                     cout << nmb << " ";
+                }
+                if (bestFitness == 0) {
+                    ofstream File("color.txt");
+                    for (int nmb : fittestIndividual) {
+                        if (nmb != 0) {
+                            File << nmb << " ";
+                        }
+                    }
+                    File.close();
                 }
                 cout << endl;
             }
         
-
         }
         NumberOfColors -= 1;
     }
     cout << "Best result: " << NumberOfColors + 2 << " colors";
+   
 }

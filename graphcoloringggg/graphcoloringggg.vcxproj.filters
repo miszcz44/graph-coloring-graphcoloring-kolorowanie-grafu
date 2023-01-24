@@ -55,5 +55,29 @@
     <Text Include="Tekst.txt">
       <Filter>Pliki zasobów</Filter>
     </Text>
+    <Text Include="gc_1000.txt">
+      <Filter>Pliki zasobów</Filter>
+    </Text>
+    <Text Include="gc500.txt">
+      <Filter>Pliki zasobów</Filter>
+    </Text>
+    <Text Include="le450_5a.txt">
+      <Filter>Pliki zasobów</Filter>
+    </Text>
+    <Text Include="miles250.txt">
+      <Filter>Pliki zasobów</Filter>
+    </Text>
+    <Text Include="myciel4.txt">
+      <Filter>Pliki zasobów</Filter>
+    </Text>
+    <Text Include="myciel7.txt">
+      <Filter>Pliki zasobów</Filter>
+    </Text>
+    <Text Include="out.txt">
+      <Filter>Pliki zasobów</Filter>
+    </Text>
+    <Text Include="color.txt">
+      <Filter>Pliki zasobów</Filter>
+    </Text>
   </ItemGroup>
 </Project>

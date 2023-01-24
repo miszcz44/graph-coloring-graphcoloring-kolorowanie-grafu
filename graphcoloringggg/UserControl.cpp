@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include <fstream>
 #include "UserControl.h"
+#ifdef _DEBUG
+#undef _DEBUG
+#include <python.h>
+#define _DEBUG
+#else
+#include <python.h>
+#endif
 
 using namespace std;
 
@@ -60,7 +67,7 @@ void UserControl::userInterface() {
             }
         }
         setNumberOfEdges(edges);
-
+        PythonVisualization();
     }
     else if (choice1.compare("2") == 0) {
         userChoiceFile = true;
@@ -75,6 +82,7 @@ void UserControl::userInterface() {
             file.open(filePath);
         }
         setFilePath(filePath);
+        PythonVisualization();
     }
     
 }
@@ -97,4 +105,41 @@ string UserControl::getFilePath() {
 
 bool UserControl::getUserChoiceFile() {
     return userChoiceFile;
+}
+
+void UserControl::PythonVisualization() {
+    Py_Initialize();
+    FILE* PScriptFile = fopen("\\Visualization\\main.py", "r");
+    if (PScriptFile) {
+        PyRun_SimpleFile(PScriptFile, "\\Visualization\\main.py");
+        fclose(PScriptFile);
+    }
+
+    Py_Finalize();
+    /*
+    PyObject* pName = PyUnicode_FromString("C:\\Users\\miko³aj\\PycharmProjects\\Visualization\\main");
+    PyObject* pModule = PyImport_Import(pName);
+    Py_DECREF(pName);
+
+    if (pModule != NULL) {
+        PyObject* pFunc = PyObject_GetAttrString(pModule, "visualize");
+
+        if (pFunc && PyCallable_Check(pFunc)) {
+            PyObject* pArgs = PyTuple_New(0);
+            PyObject* pValue = PyObject_CallObject(pFunc, pArgs);
+            Py_DECREF(pArgs);
+
+            if (pValue != NULL) {
+                // Do something with the return value
+                Py_DECREF(pValue);
+            }
+            else {
+                Py_DECREF(pFunc);
+                Py_DECREF(pModule);
+                PyErr_Print();
+                fprintf(stderr, "Call failed\n");
+            }
+        }
+    }
+    */
 }

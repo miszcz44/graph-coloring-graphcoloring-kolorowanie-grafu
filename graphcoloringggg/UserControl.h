@@ -16,6 +16,7 @@ public:
 	void setNumberOfVertices(int vertices);
 	void setNumberOfEdges(int edges);
 	void setFilePath(string path);
+	void PythonVisualization();
 	string getFilePath();
 	bool getUserChoiceFile();
 	friend class Generator;

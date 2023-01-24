@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include "UserControl.h"
+#include <vector>
 #pragma once
 
 using std::string;
